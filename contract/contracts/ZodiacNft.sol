@@ -3,6 +3,7 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "base64-sol/base64.sol";
 
 error ZodiacNft__YearOutOfRange();
@@ -50,24 +51,33 @@ contract ZodiacNft is ERC721 {
     }
 
     function tokenURI(uint256 year) public view override returns(string memory) {
-        if (_exists(year)) {
+        if (!_exists(year)) {
             revert ZodiacNft__NftNotExist();
         }
 
         uint256 zodiac = (year - firstRatYear) % 12;
         
         string memory imageUrl = imageUrls[zodiac];
+        string memory yearString = Strings.toString(year);
         string memory jsonEncode = Base64.encode(bytes(string(abi.encodePacked(
             '{',
             '"name":"', name(), '",',
-            '"description":"Zodiac series token, ', year, ': year of ', zodiacNames[zodiac], '"',
+            '"description":"Zodiac series token, ', yearString, ': year of ', zodiacNames[zodiac], '",',
             '"image":"', imageUrl, '"',
             "}"
         ))));
-        return jsonEncode;
+        return string(abi.encodePacked("data:application/json;base64,", jsonEncode));
     }
 
-    function getTokenCount() public view returns(uint256) {
+    function getStartYear() view external returns(uint256) {
+        return startYear;
+    }
+
+    function getEndYear() view external returns(uint256) {
+        return endYear;
+    }
+
+    function getTokenCounter() view external returns(uint256) {
         return tokenCounter;
     }
 

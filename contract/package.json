@@ -6,8 +6,10 @@
   "scripts": {
     "compile": "yarn hardhat compile",
     "deploy": "yarn hardhat deploy",
+    "deploy:staging": "yarn hardhat deploy --network goerli",
     "test": "yarn hardhat test",
-    "coverage": "yarn hardhat coverage"
+    "coverage": "yarn hardhat coverage",
+    "mint": "yarn hardhat run ./scripts/mint.js --network goerli"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",

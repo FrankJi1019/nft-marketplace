@@ -13,18 +13,18 @@ error ZodiacNft__NftNotExist();
 contract ZodiacNft is ERC721 {
 
     string[12] private imageUrls = [
-        "ipfs://QmVzieMExrghbaHmcybx5hDhbKhk6P58F1kkUKtXF4aAMR",  // RAT
-        "ipfs://QmScEBNeZLW56LARHuuStwBbTQW7Xz6oo1XBTwR9aL7PST",  // OX
-        "ipfs://Qmd5UrEshNkbem9BkEYrTQM816jPLbrP6szqtszXU7QMP1",  // TIGER
-        "ipfs://QmcWeU95n6PPLMnS3pPrhYLhqQ4tUHwSDpWnVq8gYk8NYG",  // RABBIT
-        "ipfs://QmVmT9QjLQFHgGWqJEv4hM9PtJwb3fZwpjvdGeJQvcySNQ",  // DRAGON
-        "ipfs://QmVZNHfGXU2eJRULoaW2kVxXjqhLJZJMMiXxpuxTNtYSdZ",  // SNAKE
-        "ipfs://Qmd3mHAr2nhj46m25uyUkf7eBzzcqvTNTjnvM3zYrKyMD9",  // HORSE
-        "ipfs://QmQFuFNqhceLCNYn5jGHehmJaFAqSYNHZPo1uhUMUFKpDC",  // GOAT
-        "ipfs://QmYbv3P8bVkGwuHdynsQNYFmry9MKToGtuseWLvUDEKWHG",  // MONKEY
-        "ipfs://QmPFngj6CG4uUe9rKsKQ5GMS6fFcHBAGYAtWfh1NBJnL6H",  // ROOSTER
-        "ipfs://QmTZDFNi2aRRQs46PJY9tLDgca4oVaiGgZoQ4LpqsRrsso",  // DOG
-        "ipfs://QmXEPGTLhLhmGiqfEwA8KscdvkkMCNeNeSJBEU5Rmy8gpY"   // PIG
+        "https://cloudflare-ipfs.com/ipfs/QmVzieMExrghbaHmcybx5hDhbKhk6P58F1kkUKtXF4aAMR",  // RAT
+        "https://cloudflare-ipfs.com/ipfs/QmScEBNeZLW56LARHuuStwBbTQW7Xz6oo1XBTwR9aL7PST",  // OX
+        "https://cloudflare-ipfs.com/ipfs/Qmd5UrEshNkbem9BkEYrTQM816jPLbrP6szqtszXU7QMP1",  // TIGER
+        "https://cloudflare-ipfs.com/ipfs/QmcWeU95n6PPLMnS3pPrhYLhqQ4tUHwSDpWnVq8gYk8NYG",  // RABBIT
+        "https://cloudflare-ipfs.com/ipfs/QmVmT9QjLQFHgGWqJEv4hM9PtJwb3fZwpjvdGeJQvcySNQ",  // DRAGON
+        "https://cloudflare-ipfs.com/ipfs/QmVZNHfGXU2eJRULoaW2kVxXjqhLJZJMMiXxpuxTNtYSdZ",  // SNAKE
+        "https://cloudflare-ipfs.com/ipfs/Qmd3mHAr2nhj46m25uyUkf7eBzzcqvTNTjnvM3zYrKyMD9",  // HORSE
+        "https://cloudflare-ipfs.com/ipfs/QmQFuFNqhceLCNYn5jGHehmJaFAqSYNHZPo1uhUMUFKpDC",  // GOAT
+        "https://cloudflare-ipfs.com/ipfs/QmYbv3P8bVkGwuHdynsQNYFmry9MKToGtuseWLvUDEKWHG",  // MONKEY
+        "https://cloudflare-ipfs.com/ipfs/QmPFngj6CG4uUe9rKsKQ5GMS6fFcHBAGYAtWfh1NBJnL6H",  // ROOSTER
+        "https://cloudflare-ipfs.com/ipfs/QmTZDFNi2aRRQs46PJY9tLDgca4oVaiGgZoQ4LpqsRrsso",  // DOG
+        "https://cloudflare-ipfs.com/ipfs/QmXEPGTLhLhmGiqfEwA8KscdvkkMCNeNeSJBEU5Rmy8gpY"   // PIG
     ];
     string[12] private zodiacNames = [
         "rat", "ox", "tiger", "rabbit", "dragon", "snake", "horse", "goat", "monkey", "rooster", "dog", "pig"

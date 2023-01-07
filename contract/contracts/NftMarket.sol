@@ -81,7 +81,7 @@ contract NftMarket is ReentrancyGuard {
         IERC721 nft = IERC721(nftAddress);
         nft.safeTransferFrom(listing.seller, msg.sender, tokenId);
 
-        proceeds[listing.seller] += msg.value;
+        proceeds[listing.seller] = proceeds[listing.seller] + msg.value;
 
         delete listings[nftAddress][tokenId];
 

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
+    "base64-sol": "^1.1.0",
     "dotenv": "^16.0.3",
     "format-logging": "^1.0.0",
     "hardhat": "^2.12.5",

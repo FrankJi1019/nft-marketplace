@@ -4,7 +4,7 @@ const print = require("format-logging")
 const main = async () => {
     print("Minting Zodiac NFT")
 
-    const years = [1971, 1973]
+    const years = [1999, 2023]
 
     const zodiacNft = await ethers.getContract("ZodiacNft")
 

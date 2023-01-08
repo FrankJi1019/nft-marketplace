@@ -1,0 +1,10 @@
+{
+  "goerli": {
+    "ZodiacNft": {
+      "address": "0xEd0424CE925364c8823263691cEd862001201bC3"
+    },
+    "NftMarket": {
+      "address": "0xdE1F38a7CCB1964Bfaa94B284Fa47D7cd7d6D5cE"
+    }
+  }
+}

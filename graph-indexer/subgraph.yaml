@@ -1,0 +1,58 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ZodiacNft
+    network: goerli
+    source:
+      address: "0xEd0424CE925364c8823263691cEd862001201bC3"
+      abi: ZodiacNft
+      startBlock: 8273350
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - ApprovalForAll
+        - NftMinted
+        - Transfer
+      abis:
+        - name: ZodiacNft
+          file: ./abis/ZodiacNft.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: NftMinted(uint256,address)
+          handler: handleNftMinted
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/zodiac-nft.ts
+  - kind: ethereum
+    name: NftMarket
+    network: goerli
+    source:
+      address: "0xdE1F38a7CCB1964Bfaa94B284Fa47D7cd7d6D5cE"
+      abi: NftMarket
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ListingDeleted
+        - NftBought
+        - NftListed
+      abis:
+        - name: NftMarket
+          file: ./abis/NftMarket.json
+      eventHandlers:
+        - event: ListingDeleted(address,uint256)
+          handler: handleListingDeleted
+        - event: NftBought(address,uint256,address,uint256)
+          handler: handleNftBought
+        - event: NftListed(address,uint256,address,uint256)
+          handler: handleNftListed
+      file: ./src/nft-market.ts

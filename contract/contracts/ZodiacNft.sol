@@ -35,6 +35,8 @@ contract ZodiacNft is ERC721 {
     uint256 private endYear = 2090;
     uint256 private firstRatYear = 1888;
 
+    event NftMinted(uint256 tokenId, address owner);
+
     constructor() ERC721("Zodiac", "ZOD") {
         tokenCounter = 0;
     }
@@ -48,6 +50,7 @@ contract ZodiacNft is ERC721 {
         }
         _safeMint(msg.sender, year);
         tokenCounter = tokenCounter + 1;
+        emit NftMinted(year, msg.sender);
     }
 
     function tokenURI(uint256 year) public view override returns(string memory) {

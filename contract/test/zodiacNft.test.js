@@ -11,7 +11,7 @@ developmentChainIds.includes(chainId) && describe("ZodiacNft contract tests", ()
     let tokenId = 2000
     let startYear, endYear
 
-    const nftUri = "data:application/json;base64,eyJuYW1lIjoiWm9kaWFjIiwiZGVzY3JpcHRpb24iOiJab2RpYWMgc2VyaWVzIHRva2VuLCAyMDAwOiB5ZWFyIG9mIGRyYWdvbiIsImltYWdlIjoiaXBmczovL1FtVm1UOVFqTFFGSGdHV3FKRXY0aE05UHRKd2IzZlp3cGp2ZEdlSlF2Y3lTTlEifQ=="
+    const nftUri = "data:application/json;base64,eyJuYW1lIjoiWm9kaWFjIiwiZGVzY3JpcHRpb24iOiJab2RpYWMgc2VyaWVzIHRva2VuLCAyMDAwOiB5ZWFyIG9mIGRyYWdvbiIsImltYWdlIjoiaHR0cHM6Ly9jbG91ZGZsYXJlLWlwZnMuY29tL2lwZnMvUW1WbVQ5UWpMUUZIZ0dXcUpFdjRoTTlQdEp3YjNmWndwanZkR2VKUXZjeVNOUSJ9"
 
     beforeEach(async () => {
         await deployments.fixture(["zodiac-nft"])
@@ -46,7 +46,9 @@ developmentChainIds.includes(chainId) && describe("ZodiacNft contract tests", ()
         it("should mint the NFT", async () => {
             let tokenCouter = String(await zodiacNft.getTokenCounter())
             expect(tokenCouter).to.be.equal("0")
-            await zodiacNft.mintNft(tokenId)
+            await expect(
+                zodiacNft.mintNft(tokenId)
+            ).to.emit(zodiacNft, "NftMinted")
             tokenCouter = String(await zodiacNft.getTokenCounter())
             expect(tokenCouter).to.be.equal("1")
         })

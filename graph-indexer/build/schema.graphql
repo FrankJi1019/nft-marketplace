@@ -1,0 +1,15 @@
+type Nft @entity {
+  id: ID!
+  address: Bytes!
+  tokenId: BigInt!
+  owner: Bytes!
+}
+
+type Listing @entity {
+  id: ID!
+  nftAddress: Bytes!
+  tokenId: BigInt!
+  seller: Bytes!
+  buyer: Bytes!
+  price: BigInt!
+}

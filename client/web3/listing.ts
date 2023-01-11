@@ -3,7 +3,7 @@ import {gql, useQuery} from "@apollo/client";
 import zodiacNftAbi from "../contracts/zodiac-nft-abi";
 import nftMarketplaceAbi from "../contracts/nft-marketplace-abi";
 import contractAddresses from "../contracts/contract-addresses";
-import {useEffect} from "react";
+import {useUtil} from "../providers/UtilProvider";
 
 export const useFetchListings = () => {
   const query = gql`{
@@ -27,12 +27,20 @@ export const useListNftHandler = (nftAddress: string, tokenId: string | number, 
   const {chainId} = useMoralis()
   const nftMarketplaceAddress = contractAddresses[String(Number(chainId!))].nftMarketplace
   const price = BigInt(listingPrice) * BigInt("1" + "0".repeat(18))
+  const {notify} = useUtil()
 
   const {runContractFunction: approveNft} = useWeb3Contract({
     abi: zodiacNftAbi,
     contractAddress: nftAddress,
     functionName: "approve",
     params: { to: nftMarketplaceAddress, tokenId }
+  })
+
+  const {runContractFunction: getApprovedAddress} = useWeb3Contract({
+    abi: zodiacNftAbi,
+    contractAddress: nftAddress,
+    functionName: "getApproved",
+    params: { tokenId }
   })
 
   const {runContractFunction: listNft} = useWeb3Contract({
@@ -43,12 +51,18 @@ export const useListNftHandler = (nftAddress: string, tokenId: string | number, 
   })
 
   return async () => {
-    await approveNft({
-      onSuccess: async (tx: any) => await tx.wait(1),
-      onError: (err) => console.log("error approving nft", err)
-    })
+    const approvedAddress = await getApprovedAddress()
+    if (approvedAddress !== nftMarketplaceAddress) {
+      await approveNft({
+        onSuccess: async (tx: any) => await tx.wait(1),
+        onError: (err) => console.log("error approving nft", err)
+      })
+    }
     await listNft({
-      onSuccess: async (tx: any) => await tx.wait(1),
+      onSuccess: async (tx: any) => {
+        await tx.wait(1)
+        notify("NFT listed")
+      },
       onError: (err) => console.log("error listing nft", err)
     })
   }

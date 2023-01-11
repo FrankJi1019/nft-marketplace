@@ -4,6 +4,7 @@ import {useFetchNftMetadata} from "../web3/nft";
 import Image from "next/image";
 import {useListNftHandler} from "../web3/listing";
 import CloseIcon from '@mui/icons-material/Close';
+import {useUtil} from "../providers/UtilProvider";
 
 interface ListingModalProps {
   open: boolean
@@ -17,6 +18,8 @@ const ListingModal: FC<ListingModalProps> = ({open, onClose, nftAddress, tokenId
   const metadata = useFetchNftMetadata(nftAddress, tokenId)
   const [price, setPrice] = useState("")
   const listNft = useListNftHandler(nftAddress, tokenId, price)
+
+  const {notify} = useUtil()
 
   return metadata && (
     <Box>
@@ -79,6 +82,7 @@ const ListingModal: FC<ListingModalProps> = ({open, onClose, nftAddress, tokenId
             <Button
               onClick={async () => {
                 await listNft()
+                onClose()
               }}
             >
               List

@@ -14,6 +14,9 @@ module.exports = {
       url: GOERLI_RPC_URL,
       accounts: [GOERLI_ACCOUNT],
       chainId: 5,
+      gas: 2100000,
+      gasPrice: 8000000000,
+      allowUnlimitedContractSize: true
     },
   },
   namedAccounts: {

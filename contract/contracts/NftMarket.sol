@@ -25,7 +25,7 @@ contract NftMarket is ReentrancyGuard {
     event NftBought(address nftAddress, uint256 tokenId, address buyer, uint256 price);
     event ListingDeleted(address nftAddress, uint256 tokenId);
 
-    mapping(address => mapping(uint256 => Listing)) private listings;
+    mapping(address => mapping(uint256 => Listing)) public listings;
     mapping(address => uint256) private proceeds;
 
     modifier nftNotListed(address nftAddress, uint256 tokenId) {

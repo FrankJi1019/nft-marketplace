@@ -5,6 +5,7 @@ import {PROJECT_NAME, DESCRIPTION, APP_TITLE} from "../constants";
 import Link from "next/link";
 import {useMoralis} from "react-moralis";
 import {ConnectButton} from "web3uikit";
+import bg from "../public/bg.jpg"
 
 const appBarOptions = [
   {
@@ -65,9 +66,21 @@ const Page: FC<PageProps> = ({title, description, children}) => {
             </Box>
           </Toolbar>
         </AppBar>
-        <Box>
+        <Box
+          sx={{
+            width: "100%",
+            backgroundImage: `url('../public/bg.jpg')`
+          }}
+        >
           <Toolbar />
-          {isWeb3Enabled ? children : <Box>Please connect your wallet</Box>}
+          <Box
+            sx={{
+              paddingX: 20,
+              paddingY: 1
+            }}
+          >
+            {isWeb3Enabled ? children : <Box>Please connect your wallet</Box>}
+          </Box>
         </Box>
       </Box>
     </>

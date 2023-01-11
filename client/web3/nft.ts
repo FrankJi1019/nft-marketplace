@@ -20,7 +20,7 @@ export const useFetchMyNft = () => {
   }
 }
 
-export const useCallTokenURI = (nftAddress: string, tokenId: number | string) => {
+export const useFetchNftMetadataHandler = (nftAddress: string, tokenId: number | string) => {
 
   const {runContractFunction} = useWeb3Contract({
     abi: zodiacNftAbi,

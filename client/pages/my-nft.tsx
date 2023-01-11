@@ -1,7 +1,8 @@
-import { Box } from "@mui/material";
+import {Box, Grid} from "@mui/material";
 import Page from "../containers/Page";
 import {useFetchMyNft} from "../web3/nft";
 import NftCard from "../components/NftCard";
+import Title from "../components/Title";
 
 const MyNftPage = () => {
 
@@ -9,22 +10,31 @@ const MyNftPage = () => {
 
   if (loading || !data) return <Page>Loading...</Page>
 
-  console.log(data)
-
   return (
     <Page>
-      <Box>
-        My NFT
-      </Box>
-      <Box>
-        {data.map(({address, tokenId}) => (
-          <NftCard
+      <Title text={"My NFT"} />
+      <Grid container sx={{width: "100%"}}>
+        {data.map(({address, tokenId, owner}) => (
+          <Grid
+            item
             key={`${address}${tokenId}`}
-            nftAddress={address}
-            tokenId={Number(tokenId)}
-          />
+            md={3}
+            sx={{padding: 2}}
+          >
+            <NftCard
+              nftAddress={address}
+              tokenId={Number(tokenId)}
+              owner={owner}
+              buttonOptions={{
+                text: "List",
+                handler: ({nftAddress, tokenId}) => {
+                  alert(`list ${tokenId} at ${nftAddress}`)
+                }
+              }}
+            />
+          </Grid>
         ))}
-      </Box>
+      </Grid>
     </Page>
   );
 };

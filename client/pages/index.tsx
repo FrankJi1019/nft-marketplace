@@ -10,11 +10,9 @@ const Home = () => {
 
   if (loading || !data) return <Page>Loading...</Page>
 
-  console.log(data)
-
   return (
     <Page>
-      <Title text={"My NFT"} />
+      <Title text={"Welcome to NFT Marketplace"} />
       <Grid container sx={{width: "100%"}}>
         {data.map(({nftAddress, tokenId, seller, price}) => (
           <Grid

@@ -28,15 +28,6 @@ contract NftMarket is ReentrancyGuard {
     mapping(address => mapping(uint256 => Listing)) public listings;
     mapping(address => uint256) private proceeds;
 
-    modifier nftNotListed(address nftAddress, uint256 tokenId) {
-        Listing memory listing = listings[nftAddress][tokenId];
-        if (listing.price <= 0) {
-            _;
-        } else {
-            revert NftMarket__NftAlreadyListed();
-        }
-    }
-
     modifier nftListed(address nftAddress, uint256 tokenId) {
         Listing memory listing = listings[nftAddress][tokenId];
         if (listing.price <= 0) {
@@ -56,7 +47,7 @@ contract NftMarket is ReentrancyGuard {
         }
     }
 
-    function createListing(address nftAddress, uint256 tokenId, uint256 price) external nftNotListed(nftAddress, tokenId) nftOwnerOnly(nftAddress, tokenId) {
+    function listNft(address nftAddress, uint256 tokenId, uint256 price) external nftOwnerOnly(nftAddress, tokenId) {
         if (price <= 0) {
             revert NftMarket__PriceTooLow();
         }
@@ -66,7 +57,12 @@ contract NftMarket is ReentrancyGuard {
             revert NftMarket__UnapprovedNft();
         }
 
-        listings[nftAddress][tokenId] = Listing(msg.sender, price);
+        Listing memory listing = listings[nftAddress][tokenId];
+        if (listing.price <= 0) {
+            listings[nftAddress][tokenId] = Listing(msg.sender, price);
+        } else {
+            listing.price = price;
+        }
 
         emit NftListed(nftAddress, tokenId, msg.sender, price);
     }
@@ -91,11 +87,6 @@ contract NftMarket is ReentrancyGuard {
     function cancelListing(address nftAddress, uint256 tokenId) external nftListed(nftAddress, tokenId) nftOwnerOnly(nftAddress, tokenId) {
         delete listings[nftAddress][tokenId];
         emit ListingDeleted(nftAddress, tokenId);
-    }
-
-    function updateListing(address nftAddress, uint256 tokenId, uint256 price) external nftListed(nftAddress, tokenId) nftOwnerOnly(nftAddress, tokenId) {
-        listings[nftAddress][tokenId].price = price;
-        emit NftListed(nftAddress, tokenId, msg.sender, price);
     }
 
     function withdraw() external payable {

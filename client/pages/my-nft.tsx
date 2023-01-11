@@ -3,8 +3,13 @@ import Page from "../containers/Page";
 import {useFetchMyNft} from "../web3/nft";
 import NftCard from "../components/NftCard";
 import Title from "../components/Title";
+import ListingModal from "../components/ListingModal";
+import {useState} from "react";
 
 const MyNftPage = () => {
+
+  const [listingCreationOption, setListingCreationOption] =
+    useState<{nftAddress: string, tokenId: string} | null>(null)
 
   const {data, loading} = useFetchMyNft()
 
@@ -28,13 +33,21 @@ const MyNftPage = () => {
               buttonOptions={{
                 text: "List",
                 handler: ({nftAddress, tokenId}) => {
-                  alert(`list ${tokenId} at ${nftAddress}`)
+                  setListingCreationOption({nftAddress, tokenId})
                 }
               }}
             />
           </Grid>
         ))}
       </Grid>
+      {listingCreationOption && (
+        <ListingModal
+          open
+          onClose={() => setListingCreationOption(null)}
+          nftAddress={listingCreationOption.nftAddress}
+          tokenId={listingCreationOption.tokenId}
+        />
+      )}
     </Page>
   );
 };

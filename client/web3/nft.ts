@@ -1,6 +1,8 @@
 import {useMoralis, useWeb3Contract} from "react-moralis";
 import {gql, useQuery} from "@apollo/client";
 import zodiacNftAbi from "../contracts/zodiac-nft-abi";
+import {useEffect, useState} from "react";
+import {NftMetadata} from "../types/nft";
 
 export const useFetchMyNft = () => {
   const {account} = useMoralis()
@@ -20,7 +22,9 @@ export const useFetchMyNft = () => {
   }
 }
 
-export const useFetchNftMetadataHandler = (nftAddress: string, tokenId: number | string) => {
+export const useFetchNftMetadata = (nftAddress: string, tokenId: number | string) => {
+
+  const [metadata, setMetadata] = useState<NftMetadata | null>(null)
 
   const {runContractFunction} = useWeb3Contract({
     abi: zodiacNftAbi,
@@ -29,5 +33,13 @@ export const useFetchNftMetadataHandler = (nftAddress: string, tokenId: number |
     params: { year: tokenId }
   })
 
-  return runContractFunction
+  useEffect(() => {
+    ;(async () => {
+      const uri = (await runContractFunction()) as string
+      const data = await (await fetch(uri)).json()
+      setMetadata(data as NftMetadata)
+    })()
+  }, [runContractFunction])
+
+  return metadata
 }

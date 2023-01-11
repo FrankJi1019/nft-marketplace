@@ -19,7 +19,7 @@ developmentChainIds.includes(chainId) && describe("NftMarket contract tests", ()
         zodiacNft = await ethers.getContract("ZodiacNft", deployer)
     })
 
-    describe("Create listing tests", () => {
+    describe("List NFT tests", () => {
 
         beforeEach(async () => {
             await zodiacNft.mintNft(tokenId)
@@ -28,7 +28,7 @@ developmentChainIds.includes(chainId) && describe("NftMarket contract tests", ()
         it("should revert with error as price is less than 0", async () => {
             await zodiacNft.approve(nftMarket.address, tokenId)
             await expect(
-                nftMarket.createListing(zodiacNft.address, tokenId, 0)
+                nftMarket.listNft(zodiacNft.address, tokenId, 0)
             ).to.be.revertedWithCustomError(nftMarket, "NftMarket__PriceTooLow")
         })
 
@@ -37,28 +37,28 @@ developmentChainIds.includes(chainId) && describe("NftMarket contract tests", ()
             const buyerSigner = await ethers.getSigner(buyer)
             const nftMarketBuyer = await nftMarket.connect(buyerSigner)
             await expect(
-                nftMarketBuyer.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+                nftMarketBuyer.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
             ).to.be.revertedWithCustomError(nftMarket, "NftMarket__NotOwner")
-        })
-
-        it("should revert with error as NFT is already listed", async () => {
-            await zodiacNft.approve(nftMarket.address, tokenId)
-            await nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
-            await expect(
-                nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
-            ).to.be.revertedWithCustomError(nftMarket, "NftMarket__NftAlreadyListed")
         })
 
         it("should revert with error as the nft has not been approved", async () => {
             await expect(
-                nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+                nftMarket.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
             ).to.be.revertedWithCustomError(nftMarket, "NftMarket__UnapprovedNft")
         })
 
-        it("should emit NftListed event", async () => {
+        it("should emit NftListed event (nft not listed)", async () => {
             await zodiacNft.approve(nftMarket.address, tokenId)
             await expect(
-                nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+                nftMarket.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+            ).to.emit(nftMarket, "NftListed")
+        })
+
+        it("should emit NftListed event (nft listed)", async () => {
+            await zodiacNft.approve(nftMarket.address, tokenId)
+            nftMarket.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+            await expect(
+                nftMarket.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
             ).to.emit(nftMarket, "NftListed")
         })
 
@@ -71,7 +71,7 @@ developmentChainIds.includes(chainId) && describe("NftMarket contract tests", ()
             await zodiacNft.mintNft(tokenId + 1)
             await zodiacNft.approve(nftMarket.address, tokenId)
             await zodiacNft.approve(nftMarket.address, tokenId + 1)
-            await nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+            await nftMarket.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
         })
 
         it("should revert as the nft is not listed", async () => {
@@ -105,7 +105,7 @@ developmentChainIds.includes(chainId) && describe("NftMarket contract tests", ()
             await zodiacNft.mintNft(tokenId + 1)
             await zodiacNft.approve(nftMarket.address, tokenId)
             await zodiacNft.approve(nftMarket.address, tokenId + 1)
-            await nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+            await nftMarket.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
         })
 
         it("should revert as NFT is not listed", async () => {
@@ -130,44 +130,12 @@ developmentChainIds.includes(chainId) && describe("NftMarket contract tests", ()
 
     })
 
-    describe("update listing tests", () => {
-
-        beforeEach(async () => {
-            await zodiacNft.mintNft(tokenId)
-            await zodiacNft.mintNft(tokenId + 1)
-            await zodiacNft.approve(nftMarket.address, tokenId)
-            await zodiacNft.approve(nftMarket.address, tokenId + 1)
-            await nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
-        })
-
-        it("should revert as NFT is not listed", async () => {
-            await expect(
-                nftMarket.updateListing(zodiacNft.address, tokenId + 1, ethers.utils.parseEther("2"))
-            ).to.be.revertedWithCustomError(nftMarket, "NftMarket__NftNotListed")
-        })
-
-        it("should revert as caller is not the owner of the NFT", async () => {
-            const buyerSigner = await ethers.getSigner(buyer)
-            const nftMarketBuyer = await nftMarket.connect(buyerSigner)
-            await expect(
-                nftMarketBuyer.updateListing(zodiacNft.address, tokenId, ethers.utils.parseEther("2"))
-            ).to.be.revertedWithCustomError(nftMarket, "NftMarket__NotOwner")
-        })
-
-        it("should emit ListingDeleted event", async () => {
-            await expect(
-                nftMarket.updateListing(zodiacNft.address, tokenId, ethers.utils.parseEther("2"))
-            ).to.emit(nftMarket, "NftListed")
-        })
-
-    })
-
     describe("withdraw proceeds tests", () => {
     
         beforeEach(async () => {
             await zodiacNft.mintNft(tokenId)
             await zodiacNft.approve(nftMarket.address, tokenId)
-            await nftMarket.createListing(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
+            await nftMarket.listNft(zodiacNft.address, tokenId, ethers.utils.parseEther(nftPrice))
             const buyerSigner = await ethers.getSigner(buyer)
             const nftMarketBuyer = await nftMarket.connect(buyerSigner)
             nftMarketBuyer.buyItem(zodiacNft.address, tokenId, { value: ethers.utils.parseEther(nftPrice) })

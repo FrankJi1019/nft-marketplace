@@ -1,9 +1,10 @@
 import {Box, Button} from "@mui/material";
 import {FC, useEffect, useState} from "react";
-import {useFetchNftMetadataHandler} from "../web3/nft";
+import {useFetchNftMetadata} from "../web3/nft";
 import Image from "next/image";
 import {truncateAddress} from "../util";
 import {useMoralis} from "react-moralis";
+import {NftMetadata} from "../types/nft";
 
 interface NftCardProps {
   nftAddress: string
@@ -16,26 +17,11 @@ interface NftCardProps {
   }
 }
 
-interface NftMetadata {
-  name: string,
-  description: string,
-  image: string
-}
 
 const NftCard: FC<NftCardProps> = ({nftAddress, tokenId, owner, price, buttonOptions}) => {
 
-  const fetchNftMetadata = useFetchNftMetadataHandler(nftAddress, tokenId)
+  const metadata = useFetchNftMetadata(nftAddress, tokenId)
   const {account} = useMoralis()
-
-  const [metadata, setMetadata] = useState<NftMetadata | null>(null)
-
-  useEffect(() => {
-    ;(async () => {
-      const uri = (await fetchNftMetadata()) as string
-      const data = await (await fetch(uri)).json()
-      setMetadata(data as NftMetadata)
-    })()
-  }, [fetchNftMetadata])
 
   return metadata && (
     <Box
@@ -66,23 +52,14 @@ const NftCard: FC<NftCardProps> = ({nftAddress, tokenId, owner, price, buttonOpt
           sx={{
             pt: 1,
             display: "flex",
-            justifyContent: price ? "space-between" : "flex-end",
+            justifyContent: "space-between",
             alignItems: "center"
           }}
         >
-          <Box
-            sx={{
-              fontWeight: "bold"
-            }}
-          >
+          <Box sx={{fontWeight: "bold"}}>
             {metadata.name} - {tokenId}
           </Box>
-          {price && (
-            <Box>
-              {price} ETH
-            </Box>
-          )}
-
+          {price && (<Box>{price} ETH</Box>)}
         </Box>
         <Box
           sx={{
@@ -93,7 +70,6 @@ const NftCard: FC<NftCardProps> = ({nftAddress, tokenId, owner, price, buttonOpt
         >
           Owned by {account === owner ? "you" : truncateAddress(owner)}
         </Box>
-
         {buttonOptions && (
           <Box sx={{pt: 2}}>
             <Button

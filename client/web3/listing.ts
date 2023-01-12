@@ -26,7 +26,7 @@ export const useListNftHandler = (nftAddress: string, tokenId: string | number, 
 
   const {chainId} = useMoralis()
   const nftMarketplaceAddress = contractAddresses[String(Number(chainId!))].nftMarketplace
-  const price = BigInt(listingPrice) * BigInt("1" + "0".repeat(18))
+  const price = BigInt(Number(listingPrice) * 1e18)
   const {notify} = useUtil()
 
   const {runContractFunction: approveNft} = useWeb3Contract({
@@ -54,17 +54,54 @@ export const useListNftHandler = (nftAddress: string, tokenId: string | number, 
     const approvedAddress = await getApprovedAddress()
     if (approvedAddress !== nftMarketplaceAddress) {
       await approveNft({
-        onSuccess: async (tx: any) => await tx.wait(1),
+        onSuccess: async (tx: any) => {
+          await tx.wait(1)
+          await listNft({
+            onSuccess: async (tx: any) => {
+              await tx.wait(1)
+              notify("NFT listed")
+            },
+            onError: (err) => console.log("error listing nft", err)
+          })
+        },
         onError: (err) => console.log("error approving nft", err)
       })
+    } else {
+      await listNft({
+        onSuccess: async (tx: any) => {
+          await tx.wait(1)
+          notify("NFT listed")
+        },
+        onError: (err) => console.log("error listing nft", err)
+      })
     }
-    await listNft({
-      onSuccess: async (tx: any) => {
-        await tx.wait(1)
-        notify("NFT listed")
-      },
-      onError: (err) => console.log("error listing nft", err)
-    })
   }
+}
 
+export const useBuyNftHandler = () => {
+  const {chainId} = useMoralis()
+  const nftMarketplaceAddress = contractAddresses[String(Number(chainId!))]?.nftMarketplace
+  const {notify} = useUtil()
+
+  // @ts-ignore
+  const {runContractFunction} = useWeb3Contract()
+
+  return {
+    run: async (nftAddress: string, tokenId: string, priceWei: string | number) => {
+      await runContractFunction({
+        params: {
+          abi: nftMarketplaceAbi,
+          contractAddress: nftMarketplaceAddress,
+          functionName: "buyItem",
+          params: { nftAddress, tokenId },
+          msgValue: priceWei
+        },
+        onSuccess: async (tx: any) => {
+          await tx.wait(1)
+          notify("NFT bought")
+        },
+        onError: err => console.log(err)
+      })
+    }
+  }
 }

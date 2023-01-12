@@ -35,7 +35,7 @@ dataSources:
     name: NftMarket
     network: goerli
     source:
-      address: "0xa5b5bb1Aa726BB6071141c003b12A50Dd2adC663"
+      address: "0x21ab156F2398425DC4333906cEb4dF01E3F07be0"
       abi: NftMarket
     mapping:
       kind: ethereum/events

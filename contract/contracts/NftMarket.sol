@@ -61,7 +61,7 @@ contract NftMarket is ReentrancyGuard {
         if (listing.price <= 0) {
             listings[nftAddress][tokenId] = Listing(msg.sender, price);
         } else {
-            listing.price = price;
+            listings[nftAddress][tokenId].price = price;
         }
 
         emit NftListed(nftAddress, tokenId, msg.sender, price);

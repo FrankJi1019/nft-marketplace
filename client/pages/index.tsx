@@ -1,14 +1,17 @@
-import {Box, Grid} from '@mui/material'
+import {Grid} from '@mui/material'
 import Page from "../containers/Page";
-import {useFetchListings} from "../web3/listing";
+import {useBuyNftHandler, useFetchListings} from "../web3/listing";
 import Title from "../components/Title";
 import NftCard from "../components/NftCard";
 
 const Home = () => {
 
   const {data, loading} = useFetchListings()
+  const buyHandler = useBuyNftHandler()
 
   if (loading || !data) return <Page>Loading...</Page>
+
+  console.log(data)
 
   return (
     <Page>
@@ -18,6 +21,8 @@ const Home = () => {
           <Grid
             item
             key={`${nftAddress}${tokenId}`}
+            xs={12}
+            sm={6}
             md={3}
             sx={{padding: 2}}
           >
@@ -25,11 +30,11 @@ const Home = () => {
               nftAddress={nftAddress}
               tokenId={Number(tokenId)}
               owner={seller}
-              price={(BigInt(price) / BigInt("1" + "0".repeat(18))).toString()}
+              price={Number(price) / 1e18}
               buttonOptions={{
                 text: "Buy now",
                 handler: ({nftAddress, tokenId}) => {
-                  alert(`Buy ${tokenId} at ${nftAddress}`)
+                  buyHandler.run(nftAddress, tokenId, price).then(() => {})
                 }
               }}
             />

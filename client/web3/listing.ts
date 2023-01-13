@@ -1,11 +1,11 @@
 import {useMoralis, useWeb3Contract} from "react-moralis";
 import {gql, useQuery} from "@apollo/client";
-import zodiacNftAbi from "../contracts/zodiac-nft-abi";
-import nftMarketplaceAbi from "../contracts/nft-marketplace-abi";
-import contractAddresses from "../contracts/contract-addresses";
-import {useUtil} from "../providers/UtilProvider";
+import zodiacNftAbi from "../src/contracts/zodiac-nft-abi";
+import nftMarketplaceAbi from "../src/contracts/nft-marketplace-abi";
+import contractAddresses from "../src/contracts/contract-addresses";
+import {useUtil} from "../src/providers/UtilProvider";
 
-export const useFetchListings = () => {
+export const useFetchAllListings = () => {
   const query = gql`{
     listings(where: {buyer: "0x0000000000000000000000000000000000000000"}) {
       nftAddress
@@ -103,5 +103,22 @@ export const useBuyNftHandler = () => {
         onError: err => console.log(err)
       })
     }
+  }
+}
+
+export const useFetchNftListing = (nftAddress: string, tokenId: string | number) => {
+  const query = gql`{
+    listings(where: {nftAddress: "${nftAddress}", tokenId: "${tokenId}"}) {
+      price
+      nftAddress
+      tokenId
+      seller
+    }
+  }`
+  const {data, loading} = useQuery(query)
+  const listings = data && (data as {listings: any}).listings
+  return {
+    data: listings as (undefined | Array<{nftAddress: string, tokenId: string, seller: string, price: string}>),
+    loading
   }
 }

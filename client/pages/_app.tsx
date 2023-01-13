@@ -4,7 +4,7 @@ import { ThemeProvider } from "@mui/material"
 import theme from '../theme'
 import {ApolloProvider, ApolloClient, InMemoryCache} from "@apollo/client"
 import {MoralisProvider} from "react-moralis"
-import UtilProvider from "../providers/UtilProvider";
+import UtilProvider from "../src/providers/UtilProvider";
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),

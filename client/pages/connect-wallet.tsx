@@ -2,7 +2,7 @@ import {Box} from "@mui/material";
 import {ConnectButton} from "web3uikit";
 import {useMoralis} from "react-moralis";
 import {useRouter} from "next/router";
-import Page from "../containers/Page";
+import Page from "../src/containers/Page";
 
 
 const ConnectWalletPage = () => {

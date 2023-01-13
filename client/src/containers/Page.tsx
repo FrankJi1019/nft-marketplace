@@ -1,11 +1,12 @@
-import {AppBar, Box, CssBaseline, Toolbar} from "@mui/material";
+import {AppBar, Box, CssBaseline, Toolbar, useTheme} from "@mui/material";
 import Head from "next/head";
 import {FC, ReactNode} from "react";
-import {PROJECT_NAME, DESCRIPTION, APP_TITLE} from "../constants";
+import {PROJECT_NAME, DESCRIPTION, APP_TITLE} from "../../constants";
 import Link from "next/link";
 import {useMoralis} from "react-moralis";
 import {ConnectButton} from "web3uikit";
-import bg from "../public/bg.jpg"
+import bg from "../../public/bg.jpg"
+import ReactLoading from "react-loading";
 
 const appBarOptions = [
   {
@@ -22,11 +23,13 @@ interface PageProps {
   title?: string
   description?: string
   children: ReactNode
+  loading?: boolean
 }
 
-const Page: FC<PageProps> = ({title, description, children}) => {
+const Page: FC<PageProps> = ({title, description, children, loading}) => {
 
   const {isWeb3Enabled} = useMoralis()
+  const theme = useTheme()
 
   return (
     <>
@@ -69,18 +72,34 @@ const Page: FC<PageProps> = ({title, description, children}) => {
         <Box
           sx={{
             width: "100%",
-            backgroundImage: `url('../public/bg.jpg')`
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "left"
           }}
         >
           <Toolbar />
-          <Box
-            sx={{
-              paddingX: 20,
-              paddingY: 1
-            }}
-          >
-            {isWeb3Enabled ? children : <Box>Please connect your wallet</Box>}
-          </Box>
+          {loading? (
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <ReactLoading type='bars' color={theme.palette.primary.main} />
+            </Box>
+          ): (
+            <Box
+              sx={{
+                paddingX: 20,
+                paddingY: 1
+              }}
+            >
+              {isWeb3Enabled ? children : <Box>Please connect your wallet</Box>}
+            </Box>
+          )}
         </Box>
       </Box>
     </>

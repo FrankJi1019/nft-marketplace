@@ -1,8 +1,8 @@
 import {useMoralis, useWeb3Contract} from "react-moralis";
 import {gql, useQuery} from "@apollo/client";
-import zodiacNftAbi from "../contracts/zodiac-nft-abi";
+import zodiacNftAbi from "../src/contracts/zodiac-nft-abi";
 import {useEffect, useState} from "react";
-import {NftMetadata} from "../types/nft";
+import {NftMetadata} from "../src/types/nft";
 
 export const useFetchMyNft = () => {
   const {account} = useMoralis()

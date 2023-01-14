@@ -10,6 +10,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import TokenIcon from '@mui/icons-material/Token';
 import {useRouter} from "next/router";
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import {useWithdrawProceedsHandler} from "../web3/proceeds";
 
 const appBarOptions: Array<{
   text: string,
@@ -45,6 +46,7 @@ const Page: FC<PageProps> = ({title, description, children, loading}) => {
   const {isWeb3Enabled} = useMoralis()
   const theme = useTheme()
   const {pathname} = useRouter()
+  const withdrawProceeds = useWithdrawProceedsHandler()
 
   return (
     <>
@@ -93,7 +95,7 @@ const Page: FC<PageProps> = ({title, description, children, loading}) => {
             </Box>
             <Box sx={{display: "flex", alignItems: "center"}}>
               <ConnectButton />
-              <Button color={"secondary"}>
+              <Button color={"secondary"} onClick={withdrawProceeds}>
                 Withdraw Proceeds
               </Button>
             </Box>

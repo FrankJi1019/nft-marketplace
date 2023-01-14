@@ -1,20 +1,24 @@
 import {Box, Button} from "@mui/material";
-import {FC} from "react";
+import {FC, useState} from "react";
 import Image from "next/image";
 import {useMoralis} from "react-moralis";
 import {truncateAddress} from "../../util";
+import NftDetailModal from "./NftDetailModal";
+import {NftState} from "../types/nft";
 
 export interface NftTileProps {
   name: string
   tokenId: string
   image: string
   ownerAddress: string
+  description: string
   price?: string
 }
 
-const NftTile: FC<NftTileProps> = ({name, tokenId, image, ownerAddress, price}) => {
+const NftTile: FC<NftTileProps> = ({name, tokenId, image, ownerAddress, price, description}) => {
 
   const {account} = useMoralis()
+  const [showDetail, setShowDetail] = useState(false)
 
   return (
     <Box
@@ -23,7 +27,7 @@ const NftTile: FC<NftTileProps> = ({name, tokenId, image, ownerAddress, price}) 
         borderRadius: 3
       }}
     >
-      <Box sx={{textAlign: "center", width: "100%"}}>
+      <Box sx={{width: "100%", display: "flex", justifyContent: "center", overflow: "hidden"}}>
         <Image
           src={image}
           alt={""}
@@ -55,12 +59,27 @@ const NftTile: FC<NftTileProps> = ({name, tokenId, image, ownerAddress, price}) 
         </Box>
         <Box sx={{pt: 2}}>
           <Button
+            onClick={() => setShowDetail(true)}
             sx={{width: "100%"}}
           >
             View
           </Button>
         </Box>
       </Box>
+      <NftDetailModal
+        open={showDetail}
+        onClose={() => setShowDetail(false)}
+        nftName={name}
+        tokenId={tokenId}
+        nftDescription={description}
+        nftOwner={ownerAddress}
+        nftImage={image}
+        nftPrice={price}
+        nftState={
+          account === ownerAddress ?
+            (price ? NftState.LISTED : NftState.OWNED) : NftState.NOT_OWNED
+        }
+      />
     </Box>
   )
 }

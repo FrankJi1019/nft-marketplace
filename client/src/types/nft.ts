@@ -22,3 +22,9 @@ export interface NftFullData {
   image: string
   price?: string
 }
+
+export enum NftState {
+  NOT_OWNED = 1,
+  OWNED,
+  LISTED
+}

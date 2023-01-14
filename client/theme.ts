@@ -25,6 +25,11 @@ const theme = createTheme({
         }
     },
     components: {
+        MuiTextField: {
+            defaultProps: {
+                size: "small"
+            }
+        },
         MuiButton: {
             defaultProps: {
                 variant: "contained"

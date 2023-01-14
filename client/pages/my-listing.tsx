@@ -1,20 +1,20 @@
 import Page from "../src/containers/Page";
-import {useFetchAllListings} from "../src/web3/listing";
+import {useFetchMyListings} from "../src/web3/listing";
 import {useFetchNftMetadataHandler} from "../src/web3/nft";
 import {useEffect, useMemo, useState} from "react";
 import {NftFullData, NftMetadata} from "../src/types/nft";
 import Title from "../src/components/Title";
 import NftTileGrid from "../src/components/NftTileGrid";
 
-const Home = () => {
+const MyListing = () => {
 
-  const {data: listings} = useFetchAllListings()
+  const {data: listings} = useFetchMyListings()
   const fetchMetadata = useFetchNftMetadataHandler()
   const [nftMetadata, setNftMetadata] = useState<Array<NftMetadata> | null>(null)
 
   useEffect(() => {
     if (!listings) return
-    ;(async () => {
+      ;(async () => {
       const metadataFetchPromises = listings.map(({nftAddress, tokenId}) => {
         return fetchMetadata(nftAddress, tokenId)
       })
@@ -22,7 +22,7 @@ const Home = () => {
     })()
   }, [fetchMetadata, listings])
 
-  const listedNftFullData = useMemo(() => {
+  const nftFullData = useMemo(() => {
     if (!listings || !nftMetadata) return []
     return listings?.map((listing) => {
       const meta = nftMetadata?.find((nft) => nft.nftAddress === listing.nftAddress && nft.tokenId === listing.tokenId)
@@ -36,16 +36,14 @@ const Home = () => {
 
   const loading = useMemo(() => !listings || !nftMetadata, [listings, nftMetadata])
 
-  console.log(listings, nftMetadata)
-
   return (
     <Page loading={loading}>
-      <Title text={"Welcome to NFT Marketplace"} />
+      <Title text={"My Listings"} />
       <NftTileGrid
-        nftData={listedNftFullData.map((listedNft) => ({...listedNft}))}
+        nftData={nftFullData.map((listedNft) => ({...listedNft}))}
       />
     </Page>
   )
 }
 
-export default Home
+export default MyListing

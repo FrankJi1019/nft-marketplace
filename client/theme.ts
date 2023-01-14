@@ -28,7 +28,27 @@ const theme = createTheme({
         MuiButton: {
             defaultProps: {
                 variant: "contained"
-            }
+            },
+            variants: [
+                {
+                    props: {variant: "outlined"},
+                    style: {
+                        textTransform: "none"
+                    }
+                },
+                {
+                    props: {variant: "text"},
+                    style: {
+                        textTransform: "none"
+                    }
+                },
+                {
+                    props: {variant: "contained"},
+                    style: {
+                        textTransform: "none"
+                    }
+                }
+            ]
         }
     }
 })

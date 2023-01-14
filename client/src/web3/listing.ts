@@ -1,9 +1,10 @@
 import {useMoralis, useWeb3Contract} from "react-moralis";
 import {gql, useQuery} from "@apollo/client";
-import zodiacNftAbi from "../src/contracts/zodiac-nft-abi";
-import nftMarketplaceAbi from "../src/contracts/nft-marketplace-abi";
-import contractAddresses from "../src/contracts/contract-addresses";
-import {useUtil} from "../src/providers/UtilProvider";
+import zodiacNftAbi from "../contracts/zodiac-nft-abi";
+import nftMarketplaceAbi from "../contracts/nft-marketplace-abi";
+import contractAddresses from "../contracts/contract-addresses";
+import {useUtil} from "../providers/UtilProvider";
+import {useMemo} from "react";
 
 export const useFetchAllListings = () => {
   const query = gql`{
@@ -15,7 +16,29 @@ export const useFetchAllListings = () => {
     }
   }`
   const {data, loading} = useQuery(query)
-  const listings = data && (data as {listings: any}).listings
+  const listings = useMemo(() => data && (data as {listings: any}).listings, [data])
+  return {
+    data: listings as (undefined | Array<{nftAddress: string, tokenId: string, seller: string, price: string}>),
+    loading
+  }
+}
+
+export const useFetchMyListings = () => {
+
+  const {account} = useMoralis()
+
+  const query = gql`{
+    listings(
+      where: {buyer: "0x0000000000000000000000000000000000000000", seller: "${account}"}
+    ) {
+      nftAddress
+      seller
+      price
+      tokenId
+    }
+  }`
+  const {data, loading} = useQuery(query)
+  const listings = useMemo(() => data && (data as {listings: any}).listings, [data])
   return {
     data: listings as (undefined | Array<{nftAddress: string, tokenId: string, seller: string, price: string}>),
     loading

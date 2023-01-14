@@ -1,21 +1,35 @@
-import {AppBar, Box, CssBaseline, Toolbar, useTheme} from "@mui/material";
+import {AppBar, Box, Button, CssBaseline, IconButton, Toolbar, useTheme} from "@mui/material";
 import Head from "next/head";
 import {FC, ReactNode} from "react";
 import {PROJECT_NAME, DESCRIPTION, APP_TITLE} from "../../constants";
 import Link from "next/link";
 import {useMoralis} from "react-moralis";
 import {ConnectButton} from "web3uikit";
-import bg from "../../public/bg.jpg"
 import ReactLoading from "react-loading";
+import HomeIcon from '@mui/icons-material/Home';
+import TokenIcon from '@mui/icons-material/Token';
+import {useRouter} from "next/router";
+import StorefrontIcon from '@mui/icons-material/Storefront';
 
-const appBarOptions = [
+const appBarOptions: Array<{
+  text: string,
+  icon: ReactNode,
+  href: string
+}> = [
   {
-    name: "Home",
+    text: "Home",
+    icon: <HomeIcon />,
     href: "/"
   },
   {
-    name: "My NFT",
+    text: "My NFT",
+    icon: <TokenIcon />,
     href: "/my-nft"
+  },
+  {
+    text: "My Listing",
+    icon: <StorefrontIcon />,
+    href: "/my-listing"
   }
 ]
 
@@ -30,6 +44,7 @@ const Page: FC<PageProps> = ({title, description, children, loading}) => {
 
   const {isWeb3Enabled} = useMoralis()
   const theme = useTheme()
+  const {pathname} = useRouter()
 
   return (
     <>
@@ -43,29 +58,44 @@ const Page: FC<PageProps> = ({title, description, children, loading}) => {
         <AppBar>
           <Toolbar sx={{display: "flex", justifyContent: "space-between"}}>
             <Box sx={{display: "flex"}}>
-              <Box sx={{mr: "10px"}}>
-                {PROJECT_NAME}
+              <Box sx={{mr: 15}}>
+                {/*{PROJECT_NAME}*/}
               </Box>
               <Box sx={{display: "flex", height: "100%"}}>
-                {appBarOptions.map(option => (
-                  <Link key={option.href} href={option.href}>
+                {appBarOptions.map(({text, icon, href}) => (
+                  <Link key={href} href={href}>
                     <Box
                       sx={{
-                        mr: "10px",
-                        height: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        mr: 5,
+                        color: pathname === href ? "black" : "grey",
                         "&:hover": {
                           textDecoration: "underline"
                         }
                       }}
                     >
-                      {option.name}
+                      <IconButton
+                        sx={{
+                          color: "inherit",
+                          "&:hover": {backgroundColor: "transparent"}
+                        }}
+                      >
+                        {icon}
+                      </IconButton>
+                      <Box>
+                        {text}
+                      </Box>
                     </Box>
                   </Link>
                 ))}
               </Box>
             </Box>
-            <Box>
+            <Box sx={{display: "flex", alignItems: "center"}}>
               <ConnectButton />
+              <Button color={"secondary"}>
+                Withdraw Proceeds
+              </Button>
             </Box>
           </Toolbar>
         </AppBar>

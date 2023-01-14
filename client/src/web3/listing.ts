@@ -145,23 +145,21 @@ export const useBuyNftHandler = () => {
   // @ts-ignore
   const {runContractFunction} = useWeb3Contract()
 
-  return {
-    run: async (nftAddress: string, tokenId: string, priceWei: string | number) => {
-      await runContractFunction({
-        params: {
-          abi: nftMarketplaceAbi,
-          contractAddress: nftMarketplaceAddress,
-          functionName: "buyItem",
-          params: { nftAddress, tokenId },
-          msgValue: priceWei
-        },
-        onSuccess: async (tx: any) => {
-          await tx.wait(1)
-          notify("NFT bought")
-        },
-        onError: err => console.log(err)
-      })
-    }
+  return async (nftAddress: string, tokenId: string, priceWei: string) => {
+    await runContractFunction({
+      params: {
+        abi: nftMarketplaceAbi,
+        contractAddress: nftMarketplaceAddress,
+        functionName: "buyItem",
+        params: { nftAddress, tokenId },
+        msgValue: priceWei
+      },
+      onSuccess: async (tx: any) => {
+        await tx.wait(1)
+        notify("NFT bought")
+      },
+      onError: err => console.log(err)
+    })
   }
 }
 

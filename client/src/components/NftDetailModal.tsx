@@ -5,6 +5,7 @@ import Image from "next/image";
 import {useMoralis} from "react-moralis";
 import {truncateAddress} from "../../util";
 import {NftState} from "../types/nft";
+import {ethers} from "ethers";
 
 // components that relate to nft operation and are only used in the modal
 const NotOwned: FC<{
@@ -63,7 +64,7 @@ interface NftDetailModalProps {
   nftState: NftState
   listNft: (price: string) => void
   cancelListing: () => void
-  buyNft:() => void
+  buyNft:(price: string) => void
 }
 
 const NftDetailModal: FC<NftDetailModalProps> = ({onClose, open, nftDescription, nftImage, nftName, nftOwner, nftPrice, tokenId, nftState, listNft, cancelListing, buyNft}) => {
@@ -116,7 +117,7 @@ const NftDetailModal: FC<NftDetailModalProps> = ({onClose, open, nftDescription,
               </Box>
               <Box>
                 {nftState === NftState.NOT_OWNED ?
-                  <NotOwned onBuyNow={buyNft} /> :
+                  <NotOwned onBuyNow={() => buyNft(nftPrice as string)} /> :
                   nftState === NftState.OWNED ?
                     <Owned onCreateListing={listNft} />:
                     <Listed onUpdatePrice={listNft} onCancelListing={cancelListing} />}

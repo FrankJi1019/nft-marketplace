@@ -15,7 +15,7 @@ export interface NftTileProps {
   price?: string
   listNft: (price: string) => void
   cancelListing: () => void
-  buyNft:() => void
+  buyNft:(price: string) => void
 }
 
 const NftTile: FC<NftTileProps> = ({

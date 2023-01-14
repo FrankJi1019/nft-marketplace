@@ -8,7 +8,7 @@ interface NftTileGridProps {
   nftData: Array<NftFullData>
   listNft: (nftAddress: string, tokenId: string, price: string) => void
   cancelListing: (nftAddress: string, tokenId: string) => void
-  buyNft:(nftAddress: string, tokenId: string) => void
+  buyNft:(nftAddress: string, tokenId: string, price: string) => void
 }
 
 const NftTileGrid: FC<NftTileGridProps> = ({nftData, listNft, cancelListing, buyNft}) => {
@@ -30,7 +30,7 @@ const NftTileGrid: FC<NftTileGridProps> = ({nftData, listNft, cancelListing, buy
               {...nftData}
               listNft={(price: string) => listNft(nftData.nftAddress, nftData.tokenId, price)}
               cancelListing={() => cancelListing(nftData.nftAddress, nftData.tokenId)}
-              buyNft={() => buyNft(nftData.nftAddress, nftData.tokenId)}
+              buyNft={(price: string) => buyNft(nftData.nftAddress, nftData.tokenId, price)}
             />
           </Grid>
         ))}

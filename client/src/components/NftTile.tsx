@@ -13,9 +13,22 @@ export interface NftTileProps {
   ownerAddress: string
   description: string
   price?: string
+  listNft: (price: string) => void
+  cancelListing: () => void
+  buyNft:() => void
 }
 
-const NftTile: FC<NftTileProps> = ({name, tokenId, image, ownerAddress, price, description}) => {
+const NftTile: FC<NftTileProps> = ({
+  name,
+  tokenId,
+  image,
+  ownerAddress,
+  price,
+  description,
+  listNft,
+  cancelListing,
+  buyNft
+}) => {
 
   const {account} = useMoralis()
   const [showDetail, setShowDetail] = useState(false)
@@ -24,10 +37,11 @@ const NftTile: FC<NftTileProps> = ({name, tokenId, image, ownerAddress, price, d
     <Box
       sx={{
         boxShadow: "2px 2px 7px 3px rgba(0,0,0,.3)",
-        borderRadius: 3
+        borderRadius: 3,
+        overflow: "hidden"
       }}
     >
-      <Box sx={{width: "100%", display: "flex", justifyContent: "center", overflow: "hidden"}}>
+      <Box sx={{width: "100%", display: "flex", justifyContent: "center"}}>
         <Image
           src={image}
           alt={""}
@@ -79,6 +93,9 @@ const NftTile: FC<NftTileProps> = ({name, tokenId, image, ownerAddress, price, d
           account === ownerAddress ?
             (price ? NftState.LISTED : NftState.OWNED) : NftState.NOT_OWNED
         }
+        listNft={listNft}
+        cancelListing={cancelListing}
+        buyNft={buyNft}
       />
     </Box>
   )

@@ -5,8 +5,11 @@ import {useEffect, useMemo, useState} from "react";
 import {NftFullData, NftMetadata} from "../src/types/nft";
 import Title from "../src/components/Title";
 import NftTileGrid from "../src/components/NftTileGrid";
+import {useMarketplace} from "../src/providers/MarketplaceProvider";
 
 const Home = () => {
+
+  const {listNft, cancelListing, buyNft} = useMarketplace()
 
   const {data: listings} = useFetchAllListings()
   const fetchMetadata = useFetchNftMetadataHandler()
@@ -36,13 +39,14 @@ const Home = () => {
 
   const loading = useMemo(() => !listings || !nftMetadata, [listings, nftMetadata])
 
-  console.log(listings, nftMetadata)
-
   return (
     <Page loading={loading}>
       <Title text={"Welcome to NFT Marketplace"} />
       <NftTileGrid
-        nftData={listedNftFullData.map((listedNft) => ({...listedNft}))}
+        nftData={listedNftFullData}
+        listNft={listNft}
+        cancelListing={cancelListing}
+        buyNft={buyNft}
       />
     </Page>
   )

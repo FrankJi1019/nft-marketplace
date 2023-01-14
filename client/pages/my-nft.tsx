@@ -5,8 +5,11 @@ import {useEffect, useMemo, useState} from "react";
 import {NftFullData, NftMetadata} from "../src/types/nft";
 import NftTileGrid from "../src/components/NftTileGrid";
 import {useFetchMyListings} from "../src/web3/listing";
+import {useMarketplace} from "../src/providers/MarketplaceProvider";
 
 const MyNft = () => {
+
+  const {listNft, cancelListing, buyNft} = useMarketplace()
 
   const {data: nfts} = useFetchMyNft()
   const fetchNftMetadata = useFetchNftMetadataHandler()
@@ -46,6 +49,9 @@ const MyNft = () => {
       <Title text={"My Listings"} />
       <NftTileGrid
         nftData={nftFullData}
+        listNft={listNft}
+        cancelListing={cancelListing}
+        buyNft={buyNft}
       />
     </Page>
   );

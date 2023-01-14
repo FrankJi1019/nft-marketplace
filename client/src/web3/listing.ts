@@ -8,11 +8,15 @@ import {useMemo} from "react";
 
 export const useFetchAllListings = () => {
   const query = gql`{
-    listings(where: {buyer: "0x0000000000000000000000000000000000000000"}) {
+    listings(
+      where: {
+        buyer: "0x0000000000000000000000000000000000000000", 
+        seller_not: "0x000000000000000000000000000000000000dead"
+    }) {
       nftAddress
-      price
-      seller
       tokenId
+      seller
+      price
     }
   }`
   const {data, loading} = useQuery(query)
@@ -45,41 +49,42 @@ export const useFetchMyListings = () => {
   }
 }
 
-export const useListNftHandler = (nftAddress: string, tokenId: string | number, listingPrice: string | number) => {
+export const useListNftHandler = () => {
 
   const {chainId} = useMoralis()
-  const nftMarketplaceAddress = contractAddresses[String(Number(chainId!))].nftMarketplace
-  const price = BigInt(Number(listingPrice) * 1e18)
+
+  const nftMarketplaceAddress = contractAddresses[String(Number(chainId!))]?.nftMarketplace
   const {notify} = useUtil()
 
-  const {runContractFunction: approveNft} = useWeb3Contract({
-    abi: zodiacNftAbi,
-    contractAddress: nftAddress,
-    functionName: "approve",
-    params: { to: nftMarketplaceAddress, tokenId }
-  })
+  // @ts-ignore
+  const {runContractFunction} = useWeb3Contract()
 
-  const {runContractFunction: getApprovedAddress} = useWeb3Contract({
-    abi: zodiacNftAbi,
-    contractAddress: nftAddress,
-    functionName: "getApproved",
-    params: { tokenId }
-  })
-
-  const {runContractFunction: listNft} = useWeb3Contract({
-    abi: nftMarketplaceAbi,
-    contractAddress: nftMarketplaceAddress,
-    functionName: "listNft",
-    params: { nftAddress, tokenId, price }
-  })
-
-  return async () => {
-    const approvedAddress = await getApprovedAddress()
+  return async (nftAddress: string, tokenId: string, listingPrice: string) => {
+    const approvedAddress = await runContractFunction({
+      params: {
+        abi: zodiacNftAbi,
+        contractAddress: nftAddress,
+        functionName: "getApproved",
+        params: { tokenId }
+      }
+    })
     if (approvedAddress !== nftMarketplaceAddress) {
-      await approveNft({
+      await runContractFunction({
+        params: {
+          abi: zodiacNftAbi,
+          contractAddress: nftAddress,
+          functionName: "approve",
+          params: { to: nftMarketplaceAddress, tokenId }
+        },
         onSuccess: async (tx: any) => {
           await tx.wait(1)
-          await listNft({
+          await runContractFunction({
+            params: {
+              abi: nftMarketplaceAbi,
+              contractAddress: nftMarketplaceAddress,
+              functionName: "listNft",
+              params: { nftAddress, tokenId, price: BigInt(Number(listingPrice) * 1e18) }
+            },
             onSuccess: async (tx: any) => {
               await tx.wait(1)
               notify("NFT listed")
@@ -90,7 +95,13 @@ export const useListNftHandler = (nftAddress: string, tokenId: string | number, 
         onError: (err) => console.log("error approving nft", err)
       })
     } else {
-      await listNft({
+      await runContractFunction({
+        params: {
+          abi: nftMarketplaceAbi,
+          contractAddress: nftMarketplaceAddress,
+          functionName: "listNft",
+          params: { nftAddress, tokenId, price: BigInt(Number(listingPrice) * 1e18) }
+        },
         onSuccess: async (tx: any) => {
           await tx.wait(1)
           notify("NFT listed")
@@ -98,6 +109,31 @@ export const useListNftHandler = (nftAddress: string, tokenId: string | number, 
         onError: (err) => console.log("error listing nft", err)
       })
     }
+  }
+}
+
+export const useCancelListingHandler = () => {
+  const {chainId} = useMoralis()
+  const nftMarketplaceAddress = contractAddresses[String(Number(chainId!))]?.nftMarketplace
+  const {notify} = useUtil()
+
+  // @ts-ignore
+  const {runContractFunction} = useWeb3Contract()
+
+  return async (nftAddress: string, tokenId: string) => {
+    await runContractFunction({
+      params: {
+        abi: nftMarketplaceAbi,
+        contractAddress: nftMarketplaceAddress,
+        functionName: "cancelListing",
+        params: { nftAddress, tokenId }
+      },
+      onSuccess: async (tx: any) => {
+        await tx.wait(1)
+        notify("Listing canceled")
+      },
+      onError: err => console.log(err)
+    })
   }
 }
 
@@ -129,19 +165,4 @@ export const useBuyNftHandler = () => {
   }
 }
 
-export const useFetchNftListing = (nftAddress: string, tokenId: string | number) => {
-  const query = gql`{
-    listings(where: {nftAddress: "${nftAddress}", tokenId: "${tokenId}"}) {
-      price
-      nftAddress
-      tokenId
-      seller
-    }
-  }`
-  const {data, loading} = useQuery(query)
-  const listings = data && (data as {listings: any}).listings
-  return {
-    data: listings as (undefined | Array<{nftAddress: string, tokenId: string, seller: string, price: string}>),
-    loading
-  }
-}
+

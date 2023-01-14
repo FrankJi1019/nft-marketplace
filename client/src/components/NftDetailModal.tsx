@@ -61,9 +61,12 @@ interface NftDetailModalProps {
   nftImage: string
   nftPrice?: string
   nftState: NftState
+  listNft: (price: string) => void
+  cancelListing: () => void
+  buyNft:() => void
 }
 
-const NftDetailModal: FC<NftDetailModalProps> = ({onClose, open, nftDescription, nftImage, nftName, nftOwner, nftPrice, tokenId, nftState}) => {
+const NftDetailModal: FC<NftDetailModalProps> = ({onClose, open, nftDescription, nftImage, nftName, nftOwner, nftPrice, tokenId, nftState, listNft, cancelListing, buyNft}) => {
 
   const {account} = useMoralis()
 
@@ -113,10 +116,10 @@ const NftDetailModal: FC<NftDetailModalProps> = ({onClose, open, nftDescription,
               </Box>
               <Box>
                 {nftState === NftState.NOT_OWNED ?
-                  <NotOwned onBuyNow={() => {}} /> :
+                  <NotOwned onBuyNow={buyNft} /> :
                   nftState === NftState.OWNED ?
-                    <Owned onCreateListing={() => {}} />:
-                    <Listed onUpdatePrice={() => {}} onCancelListing={() => {}} />}
+                    <Owned onCreateListing={listNft} />:
+                    <Listed onUpdatePrice={listNft} onCancelListing={cancelListing} />}
               </Box>
             </Box>
           </Box>

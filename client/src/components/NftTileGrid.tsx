@@ -2,12 +2,16 @@ import {Box, Grid} from "@mui/material";
 import {FC} from "react";
 import NftTile from "./NftTile";
 import {NftTileProps} from "./NftTile";
+import {NftFullData} from "../types/nft";
 
 interface NftTileGridProps {
-  nftData: Array<NftTileProps>
+  nftData: Array<NftFullData>
+  listNft: (nftAddress: string, tokenId: string, price: string) => void
+  cancelListing: (nftAddress: string, tokenId: string) => void
+  buyNft:(nftAddress: string, tokenId: string) => void
 }
 
-const NftTileGrid: FC<NftTileGridProps> = ({nftData}) => {
+const NftTileGrid: FC<NftTileGridProps> = ({nftData, listNft, cancelListing, buyNft}) => {
 
   return (
     <Box>
@@ -22,7 +26,12 @@ const NftTileGrid: FC<NftTileGridProps> = ({nftData}) => {
             sx={{p: 3}}
             key={`${Math.random()}`}
           >
-            <NftTile {...nftData} />
+            <NftTile
+              {...nftData}
+              listNft={(price: string) => listNft(nftData.nftAddress, nftData.tokenId, price)}
+              cancelListing={() => cancelListing(nftData.nftAddress, nftData.tokenId)}
+              buyNft={() => buyNft(nftData.nftAddress, nftData.tokenId)}
+            />
           </Grid>
         ))}
       </Grid>
